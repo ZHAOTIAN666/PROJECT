@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+      tools {
+        maven 'Maven-3.9'
+    }
+    
     environment {
         JIRA_URL = 'https://graduate-team-ogufp5h8.atlassian.net'
         JIRA_ISSUE = 'SCRUM-2'
