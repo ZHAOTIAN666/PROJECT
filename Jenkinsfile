@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        // 添加Maven工具配置
+        maven 'Maven-3.9'  // 这个名称需要与Jenkins中配置的Maven名称一致
+    }
+
     environment {
         JIRA_URL = 'https://graduate-team-ogufp5h8.atlassian.net'
         JIRA_ISSUE = 'SCRUM-2'
@@ -35,9 +40,19 @@ pipeline {
             }
         }
 
+        stage('Verify Tools') {
+            steps {
+                script {
+                    echo "Verifying Maven installation"
+                    bat 'mvn --version'
+                    echo "Verifying Java installation"
+                    bat 'java -version'
+                }
+            }
+        }
+
         stage('Build Spring Boot Backend') {
             steps {
-                // 修改路径：从 'springboot' 改为 'EduFlow/springboot'
                 dir('EduFlow/springboot') {
                     script {
                         echo "Building Spring Boot Application"
@@ -56,7 +71,6 @@ pipeline {
 
         stage('Build Vue Frontend') {
             steps {
-                // 修改路径：从 'vue' 改为 'EduFlow/vue'
                 dir('EduFlow/vue') {
                     script {
                         echo "Building Vue.js Frontend"
@@ -79,7 +93,6 @@ pipeline {
 
         stage('Run Backend Tests') {
             steps {
-                // 修改路径：从 'springboot' 改为 'EduFlow/springboot'
                 dir('EduFlow/springboot') {
                     script {
                         echo "Running Spring Boot Tests"
@@ -98,7 +111,6 @@ pipeline {
 
         stage('Package Application') {
             steps {
-                // 修改路径：从 'springboot' 改为 'EduFlow/springboot'
                 dir('EduFlow/springboot') {
                     script {
                         echo "Packaging Spring Boot Application"
