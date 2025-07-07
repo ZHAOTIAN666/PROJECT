@@ -1,0 +1,52 @@
+# Maven (Spring Boot)
+springboot/target/
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Node.js (Vue)
+vue/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+vue/dist/
+vue/build/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Database files
+*.db
+*.sqlite
+
+# Temporary files
+*.tmp
+*.temp
+
+# Compiled class files
+*.class
