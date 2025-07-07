@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-      tools {
-        maven 'Maven-3.9'
-    }
-    
     environment {
         JIRA_URL = 'https://graduate-team-ogufp5h8.atlassian.net'
         JIRA_ISSUE = 'SCRUM-2'
@@ -41,7 +37,8 @@ pipeline {
 
         stage('Build Spring Boot Backend') {
             steps {
-                dir('springboot') {
+                // 修改路径：从 'springboot' 改为 'EduFlow/springboot'
+                dir('EduFlow/springboot') {
                     script {
                         echo "Building Spring Boot Application"
                         echo "Compiling Java source code"
@@ -59,7 +56,8 @@ pipeline {
 
         stage('Build Vue Frontend') {
             steps {
-                dir('vue') {
+                // 修改路径：从 'vue' 改为 'EduFlow/vue'
+                dir('EduFlow/vue') {
                     script {
                         echo "Building Vue.js Frontend"
                         echo "Installing npm dependencies"
@@ -81,7 +79,8 @@ pipeline {
 
         stage('Run Backend Tests') {
             steps {
-                dir('springboot') {
+                // 修改路径：从 'springboot' 改为 'EduFlow/springboot'
+                dir('EduFlow/springboot') {
                     script {
                         echo "Running Spring Boot Tests"
 
@@ -99,7 +98,8 @@ pipeline {
 
         stage('Package Application') {
             steps {
-                dir('springboot') {
+                // 修改路径：从 'springboot' 改为 'EduFlow/springboot'
+                dir('EduFlow/springboot') {
                     script {
                         echo "Packaging Spring Boot Application"
 
