@@ -219,6 +219,73 @@ pipeline {
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Building Docker image for EduFlow application"
+                    
+                    try {
+                        bat """
+                            docker build -t eduflow-springboot:latest .
+                            docker tag eduflow-springboot:latest ghcr.io/zhaotian666/eduflow-springboot:latest
+                            docker tag eduflow-springboot:latest ghcr.io/zhaotian666/eduflow-springboot:build-${BUILD_NUMBER}
+                        """
+                        echo "Docker image built successfully"
+                    } catch (Exception e) {
+                        echo "Docker image build failed: ${e.getMessage()}"
+                        echo "Continuing pipeline execution"
+                    }
+                }
+            }
+        }
+
+        stage('Push to GitHub Container Registry') {
+            steps {
+                script {
+                    echo "Pushing Docker image to GitHub Container Registry"
+                    
+                    try {
+                        withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                            bat """
+                                echo %GITHUB_TOKEN% | docker login ghcr.io -u ZHAOTIAN666 --password-stdin
+                                docker push ghcr.io/zhaotian666/eduflow-springboot:latest
+                                docker push ghcr.io/zhaotian666/eduflow-springboot:build-${BUILD_NUMBER}
+                            """
+                        }
+                        echo "Docker image pushed successfully to GitHub Container Registry!"
+                    } catch (Exception e) {
+                        echo "Docker image push failed: ${e.getMessage()}"
+                        echo "Continuing pipeline execution"
+                    }
+                }
+            }
+        }
+
+        stage('Docker Success Notification') {
+            steps {
+                script {
+                    echo "🎉 Docker Integration Complete!"
+                    
+                    withCredentials([usernamePassword(
+                        credentialsId: 'jira-graduate-team',
+                        usernameVariable: 'JIRA_USER',
+                        passwordVariable: 'JIRA_TOKEN')]) {
+
+                        script {
+                            try {
+                                bat """
+                                    curl -u "${JIRA_USER}:${JIRA_TOKEN}" -X POST "${env.JIRA_URL}/rest/api/2/issue/${env.JIRA_ISSUE}/comment" -H "Accept: application/json" -H "Content-Type: application/json" -d "{\\"body\\": \\"🐳 Docker Integration SUCCESS! Image pushed to GitHub Container Registry: ghcr.io/zhaotian666/eduflow-springboot:build-${BUILD_NUMBER} Team members can pull using: docker pull ghcr.io/zhaotian666/eduflow-springboot:latest View package: https://github.com/ZHAOTIAN666/PROJECT/pkgs/container/eduflow-springboot\\"}" --silent --show-error
+                                """
+                                echo "Jira updated with Docker deployment information"
+                            } catch (Exception e) {
+                                echo "Could not update Jira with Docker information: ${e.getMessage()}"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Update Build Status in Jira') {
             steps {
                 withCredentials([usernamePassword(
